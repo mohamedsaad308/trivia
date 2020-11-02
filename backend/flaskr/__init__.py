@@ -14,7 +14,7 @@ def create_app(test_config=None):
   app = Flask(__name__)
   setup_db(app)
   '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs #DONE
+  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs 
   '''
   CORS(app)        
   '''
@@ -167,18 +167,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  # @app.route('/questions', methods=['POST'])
-  # def search_questions():
-  #   body = request.get_json()
-  #   search = body.get('search', None)
-  #   search_term = f'%{search}%'
-  #   result = Questions.query.filter(Question.question.ilike(search_term)).order_by(Question.id).all()
-  #   current_questions = paginate_questions(request, result)
-  #   return jsonify({
-  #     'success' : True,
-  #     'questions': current_questions,
-  #     'total_questions': len(result)
-  #   })
+# Search requests goes to ('questions/') with a search word and handled by create_new_question()
   '''
   @TODO: 
   Create a GET endpoint to get questions based on category. 
@@ -216,9 +205,8 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
-  #to get questions that wasn't asked before
 
-  @app.route('/quizzes', methods=['POST', 'GET'])
+  @app.route('/quizzes', methods=['POST'])
   def play():
     body = request.get_json()
     previous_questions = body.get('previous_questions', None)
