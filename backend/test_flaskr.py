@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
 from models import setup_db, Question, Category
-
+from dotenv import load_dotenv
 
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
@@ -15,7 +15,7 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}:{}@{}/{}".format('postgres', '2941', 'localhost:5432', self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}".format(os.environ.get('DB_USER'), os.environ.get('DB_PASSWORD'), 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
         self.new_question = {'question': 'Which player scored the fastest hat-trick in the Premier League?', 
                              'answer' : 'Sadio Mane (2 minutes 56 seconds for Southampton vs Aston Villa in 2015)', 
@@ -54,17 +54,17 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data["message"], "resource not found")
         
-    # def test_delete_question(self):
-    #     res = self.client().delete('/questions/5')
-    #     data = json.loads(res.data)
-    #     question = Question.query.filter(Question.id == 5).one_or_none()
+    def test_delete_question(self):
+        res = self.client().delete('/questions/12')
+        data = json.loads(res.data)
+        question = Question.query.filter(Question.id == 12).one_or_none()
         
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], 5)
-    #     self.assertTrue(data['total_questions'])
-    #     self.assertTrue(len(data['questions']))
-    #     self.assertEqual(question, None)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], 12)
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(len(data['questions']))
+        self.assertEqual(question, None)
         
     def test_404_delete_non_existing_question(self):
         res = self.client().delete('/questions/1000')
@@ -83,6 +83,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['created'])
         self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
+        
+    def test_400_if_question_was_not_well_formatted(self):
+        res = self.client().post('/questions', json={'question':'some question'})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data["message"], "bad request")
 
     def test_422_if_question_creation_failed(self):
         res = self.client().post('/questions/5', json=self.new_question)

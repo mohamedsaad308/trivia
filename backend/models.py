@@ -3,9 +3,15 @@ from sqlalchemy import Column, String, Integer, create_engine, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
+
+USER = os.environ.get('DB_USER')
+PASSWORD = os.environ.get('DB_PASSWORD')
 
 database_name = "trivia"
-database_path = "postgres://{}:{}@{}/{}".format('postgres', '2941', 'localhost:5432', database_name)
+database_path = "postgres://{}:{}@{}/{}".format(USER, PASSWORD, 'localhost:5432', database_name)
 
 db = SQLAlchemy()
 
